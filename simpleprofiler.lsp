@@ -41,10 +41,16 @@
     (let (table-as-list)
       (maphash (lambda(k v) (push (cons k v) table-as-list)) profile-hashtable)
       (dolist (pair (sort table-as-list #'> :key #'cdr))
-   (format *standard-output* "~S:  ~,10F~%" (car pair) (cdr pair)))))
+   (format *standard-output* "~,10F   ~S~%" (cdr pair) (car pair)))))
   )
+
+;; TBD: Try using (setf (fdefinition func) (lambda...))
+;;      (with-profiling (f1 f2...) (run-tests))
 
 (f2::win-open-console-window)
 (setf si::*enter-break-handler* t)
 (use-fast-links nil)
 
+(defun test-func(cnt)
+ (dotimes (i cnt)
+  (format t "~%~a" i)))
