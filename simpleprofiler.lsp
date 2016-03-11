@@ -1,3 +1,7 @@
+;;-*-Lisp-*-
+
+;; Extremely trivial profiler for Lisp code
+
 (in-package :clausbrod.de)
 (export '(profile-function unprofile-function list-profiling-results))
 
@@ -20,10 +24,8 @@
              (apply original-symbol-function r)
            (funcall original-symbol-function))
             (let ((execution-time (- (f2::seconds-since-1970) start-time))
-             (accum (gethash func profile-hashtable)))
-         (if accum
+             (accum (gethash func profile-hashtable 0.0)))
              (setf (gethash func profile-hashtable) (+ accum execution-time))
-           (setf (gethash func profile-hashtable) execution-time))
          (format *standard-output* "~%Execution time for ~S: ~,10F~%" func execution-time))))))
      ))))
 
