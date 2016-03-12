@@ -1,14 +1,14 @@
 ;;-*-Lisp-*-
 
 ;; Extremely trivial profiler for Lisp code
+;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :profiler.clausbrod.de)
 (export '(profile-function unprofile-function list-profiling-results with-profiler))
 
 (defun get-current-time-in-microseconds()
   #+hcl (f2::seconds-since-1970)
-  #+clisp (get-internal-real-time)
-  #-hcl #-clisp (* (/ 1000000 internal-time-units-per-second) (get-internal-real-time))
+  #-hcl (* (/ 1000000 internal-time-units-per-second) (get-internal-real-time))
   )
 
 (let ((profile-hashtable (make-hash-table)))
@@ -89,18 +89,14 @@
 ;; TBD: Try using (setf (fdefinition func) (lambda...))
 ;;      (with-profiling (f1 f2...) (run-tests))
 
-(f2::win-open-console-window)
-(setf si::*enter-break-handler* t)
-(use-fast-links nil)
-
-;;(trace profile-function)
-;;(trace unprofile-function)
-;;(trace profile-package)
+#+hcl (f2::win-open-console-window)
+#+hcl (setf si::*enter-break-handler* t)
+#+hcl (use-fast-links nil)
 
 (defun test-func(cnt)
  (dotimes (i cnt)
   (format t "~%~a" i)))
 
-(frame2-ui::display (macroexpand '(with-profiler ('test-func (find-package "ELAN")) (test-func 42))))
+;;(frame2-ui::display (macroexpand '(with-profiler ('test-func (find-package "ELAN")) (test-func 42))))
 
-(with-profiler ('test-func 'format (find-package "ELAN") (find-package "OLI")) (test-func 42))
+#+hcl (with-profiler ('test-func 'format (find-package "ELAN") (find-package "OLI")) (test-func 42))
