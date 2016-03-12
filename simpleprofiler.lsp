@@ -2,35 +2,42 @@
 
 ;; Extremely trivial profiler for Lisp code
 
-(in-package :clausbrod.de)
+(in-package :profiler.clausbrod.de)
 (export '(profile-function unprofile-function list-profiling-results with-profiler))
 
+(defun get-current-time-in-microseconds()
+  #+hcl (f2::seconds-since-1970)
+  #+clisp (get-internal-real-time)
+  #-hcl #-clisp (* (/ 1000000 internal-time-units-per-second) (get-internal-real-time))
+  )
+
 (let ((profile-hashtable (make-hash-table)))
+  (defun execute-with-profiling(func original-symbol-function args)
+    (let ((start-time (get-current-time-in-microseconds)))
+      (unwind-protect
+	  (if args
+	      (apply original-symbol-function args)
+	    (funcall original-symbol-function))
+	(let ((execution-time (- (get-current-time-in-microseconds) start-time))
+	      (accum (gethash func profile-hashtable 0.0)))
+	  (setf (gethash func profile-hashtable) (+ accum execution-time)))))) 
+  
   (defun profile-function(func)
     "Instrument function for profiling"
+
+    (when (or (not (fboundp func))
+	      (get func :profile-original-symbol-function))
+      (return-from profile-function))
     
-    ;; check if symbol-plist already contains profiler flag
-    (unless (get func :profile-original-symbol-function)
-      (let ((original-symbol-function (symbol-function func)))
-	(when original-symbol-function
-	  (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
-	  
-	  ;; install profiler code
-	  (setf (symbol-function func)
-		(lambda(&rest r)
-		  (let ((start-time (f2::seconds-since-1970)))
-		    (unwind-protect
-			(if r
-			    (apply original-symbol-function r)
-			  (funcall original-symbol-function))
-		      (let ((execution-time (- (f2::seconds-since-1970) start-time))
-			    (accum (gethash func profile-hashtable 0.0)))
-			(setf (gethash func profile-hashtable) (+ accum execution-time))
-			;;(format *standard-output* "~%Execution time for ~S: ~,10F~%" func execution-time)
-			)))))
-	  ))))
+    (let ((original-symbol-function (symbol-function func)))
+      (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
+	
+      ;; install profiler code
+      (setf (symbol-function func)
+	    (lambda(&rest r) (execute-with-profiling func original-symbol-function r)))))
 
   (defun profile-package(pkg)
+    "Profile all external functions in a package"
     (do-external-symbols (s pkg)
 			 (when (functionp s)
 			   (profile-function s))))
@@ -66,11 +73,11 @@
       (dolist (pair (sort table-as-list #'> :key #'cdr))
 	(format *standard-output* "~,10F  ~S~%" (cdr pair) (car pair)))))
 
-  (defmacro with-profiler(functions &body b)
+  (defmacro with-profiler(function-specifiers &body b)
     `(progn
-       (profile-functions ,@functions)
+       (profile-functions ,@function-specifiers)
        (progn ,@b)
-       (unprofile-functions ,@functions)
+       (unprofile-functions ,@function-specifiers)
        (list-profiling-results)))
    
   )
@@ -93,4 +100,3 @@
 (frame2-ui::display (macroexpand '(with-profiler ('test-func (find-package "ELAN")) (test-func 42))))
 
 (with-profiler ('test-func 'format (find-package "ELAN") (find-package "OLI")) (test-func 42))
-
