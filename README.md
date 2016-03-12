@@ -6,11 +6,13 @@ Trivial profiling tool written for Common Lisp, particularly for the Lisp dialec
 
 ## Introduction
 
-See <http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler>
+See <http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler>. Thanks a lot to AlexG for the original inspiration.
 
 ## Status
 
-At this point, consider this code experimental. Contributions are welcome, of course, but be aware that the code is still in a state of rapid flux, and probably buggy as hell anyway.
+At this point, consider this code experimental. Contributions are of course welcome, but be aware that the code is still in a state of rapid flux. And probably buggy as hell anyway.
+
+So far, this code was tested in CoCreate Modeling only. It is likely, but not guaranteed to work in other Common Lisp implementations as well.
 
 ## Usage
 
@@ -44,7 +46,8 @@ To profile the function under test as well as all externally visible functions i
 
 ## Limitations
 
+CoCreate Modeling implements a subset of CLtL2 only, which means that some of the other available profiling tools for Common Lisp cannot be used, or at least not directly. Therefore, providing a profiler for CoCreate Modeling is the top priority, even if this means that lisp-profiler may become incompatible with other Lisp implementations.
 
-This code is geared towards use in CoCreate Modeling. I will try to provide some level of compatibility with other Lisp dialects, but this is not a top priority (yet).
+I will try to provide at least a minimum level of compatibility with other Lisp dialects, though. Every now and then, I may even verify that claim by running tests :-D
 
 
