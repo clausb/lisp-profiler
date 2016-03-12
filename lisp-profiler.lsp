@@ -65,6 +65,9 @@
       (when (remprop func :profile-original-symbol-function)
 	(setf (symbol-function func) original-symbol-function))))
 
+  (defun reset-profiling-results()
+    (clrhash profile-hashtable))
+    
   (defun list-profiling-results()
     "List profiling results in order of decreasing accumulated execution times"
     (format *standard-output* "~%Accumulated execution times:~%")
@@ -75,6 +78,7 @@
 
   (defmacro with-profiler(function-specifiers &body b)
     `(progn
+       (reset-profiling-results)
        (profile-functions ,@function-specifiers)
        (progn ,@b)
        (unprofile-functions ,@function-specifiers)
