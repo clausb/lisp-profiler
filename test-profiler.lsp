@@ -4,7 +4,10 @@
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :clausbrod.de)
+
 (require "lisp-profiler" #P"lisp-profiler.lsp")
+
+(use-package :profiler.clausbrod.de)
 
 #+hcl (f2::win-open-console-window)
 #+hcl (setf si::*enter-break-handler* t)
