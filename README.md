@@ -8,6 +8,10 @@ Trivial profiling tool written for Common Lisp, particularly for the Lisp dialec
 
 See <http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler>
 
+## Status
+
+At this point, consider this code experimental. Contributions are welcome, of course, but be aware that the code is still in a state of rapid flux, and probably buggy as hell anyway.
+
 ## Usage
 
 To load the profiler into CoCreate Modeling, load `lisp-profiler.lsp` via File/Load, or enter the following in the user input line:
