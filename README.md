@@ -28,9 +28,16 @@ To stop profiling `my-function`:
 	
 The `with-profiler` macro conveniently wraps the above steps into a single call:
 
-	(profiler.clausbrod.de:with-profiler 'my-function
+	(profiler.clausbrod.de:with-profiler ('my-function)
 		(run-some-test-code))
 		
+To profile the function under test as well as all externally visible functions in a package:
+
+	(profiler.clausbrod.de:with-profiler 
+	  ('my-function (find-package "FOO-PACKAGE"))
+		(run-some-test-code))
+
+
 ## Limitations
 
 
