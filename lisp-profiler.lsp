@@ -1,12 +1,13 @@
 ;;-*-Lisp-*-
 
-;; Extremely trivial profiler for Lisp code
+;; Ridiculously trivial profiler for Lisp code
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :profiler.clausbrod.de)
 (export '(profile-function unprofile-function list-profiling-results with-profiler))
 
 (provide "lisp-profiler")
+
 
 (let ((profile-hashtable (make-hash-table)))
   (defun reset-profiling-results()
@@ -24,7 +25,9 @@
     (let ((accum (gethash func profile-hashtable 0.0)))
       (setf (gethash func profile-hashtable) (+ accum execution-time))))
   )
-  
+
+
+
 (defun get-current-time-in-microseconds()
   #+hcl (f2::seconds-since-1970)
   #-hcl (* (/ 1000000 internal-time-units-per-second) (get-internal-real-time))
@@ -52,6 +55,7 @@
     (setf (symbol-function func)
 	  (lambda(&rest r) (execute-with-profiling func original-symbol-function r)))))
 
+
 (defun profile-package(pkg)
   "Profile all external functions in a package"
   (do-external-symbols (s pkg)
@@ -62,6 +66,12 @@
   (do-external-symbols (s pkg)
 		       (when (and (functionp s) (fboundp s))
 			 (unprofile-function s))))
+
+(defun unprofile-function(func)
+  "Remove profiling instrumentation for function"
+  (let ((original-symbol-function (get func :profile-original-symbol-function)))
+    (when (remprop func :profile-original-symbol-function)
+      (setf (symbol-function func) original-symbol-function))))
 
 (defun profile-functions(&rest function-specifiers)
   (dolist (fspec function-specifiers)
@@ -75,12 +85,6 @@
 	(unprofile-package fspec)
       (unprofile-function fspec))))
 
-(defun unprofile-function(func)
-  "Remove profiling instrumentation for function"
-  (let ((original-symbol-function (get func :profile-original-symbol-function)))
-    (when (remprop func :profile-original-symbol-function)
-      (setf (symbol-function func) original-symbol-function))))
-
 (defmacro with-profiler(function-specifiers &body b)
   `(progn
      (reset-profiling-results)
@@ -89,5 +93,7 @@
      (unprofile-functions ,@function-specifiers)
      (list-profiling-results)))
 
-;; TBD: Try using (setf (fdefinition func) (lambda...))
+;; TBD:
+;; - Try using (setf (fdefinition func) (lambda...))
 ;;      (with-profiling (f1 f2...) (run-tests))
+;; - Make profiling output configurable

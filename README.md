@@ -1,6 +1,6 @@
 # lisp-profiler
 
-Trivial profiling tool written for Common Lisp, particularly for the Lisp dialect used in [CoCreate Modeling](http://www.clausbrod.de/cgi-bin/view.pl/CoCreateModeling/)
+This is a ridiculously trivial profiling tool written for Common Lisp, particularly for the Lisp dialect used in [CoCreate Modeling](http://www.clausbrod.de/cgi-bin/view.pl/CoCreateModeling/)
 (also known as SolidDesigner, or more recently 
 [PTC Creo Elements/Direct Modeling](https://de.wikipedia.org/wiki/Creo_Elements/Direct_Modeling)).
 
@@ -28,6 +28,12 @@ Now run your test (which, of course, at some point should call `my-function`), a
 
 	(profiler.clausbrod.de:list-profiling-results)
 	
+Sample output:
+
+	Accumulated execution times:
+	0.0200290680  FORMAT
+	0.0200290680  TEST-FUNC
+
 To stop profiling `my-function`:
 
 	(profiler.clausbrod.de:unprofile-function 'my-function)
@@ -46,8 +52,7 @@ To profile the function under test as well as all externally visible functions i
 
 ## Limitations
 
-CoCreate Modeling implements a subset of CLtL1 only, which means that some of the other available profiling tools for Common Lisp cannot be used, or at least not directly. Therefore, providing a profiler for CoCreate Modeling is the top priority, even if this means that lisp-profiler may become incompatible with other Lisp implementations.
+CoCreate Modeling implements a subset of CLtL1 only. For example, there is no support for conditions, and the CLOS implementation is just a draft. So we cannot always use existing Common Lisp libraries or tools. Providing profiling functionality for CoCreate Modeling was and is my top priority, even if this means that lisp-profiler may become incompatible with other Lisp implementations.
 
 I will try to provide at least a minimum level of compatibility with other Lisp dialects, though. Every now and then, I may even verify that claim by running tests :-D
-
 

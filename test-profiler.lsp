@@ -1,6 +1,6 @@
 ;;-*-Lisp-*-
 
-;; Test code for extremely trivial profiler for Lisp code
+;; Test code for ridiculously trivial profiler for Lisp code
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :clausbrod.de)
