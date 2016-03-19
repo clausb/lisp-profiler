@@ -41,20 +41,31 @@
 	  (funcall original-symbol-function))
       (update-hashtable func (- (get-current-time-in-microseconds) start-time)))))
 
-(defun profile-function(func)
-  "Instrument function for profiling"
-  
-  (when (or (not (fboundp func))
-	    (get func :profile-original-symbol-function))
-    (return-from profile-function))
-  
-  (let ((original-symbol-function (symbol-function func)))
-    (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
+(let ((unprofilable-functions (make-hash-table :test 'equal)))
+  (setf (gethash "FRAME2" unprofilable-functions) '("SECONDS-SINCE-1970"))
     
-    ;; install profiler code
-    (setf (symbol-function func)
-	  (lambda(&rest r) (execute-with-profiling func original-symbol-function r)))))
+  (defun profilable-p(func)
+    (let ((p (gethash (package-name (symbol-package func)) unprofilable-functions)))
+      (not (member (symbol-name func) p :test 'equal))))
 
+  (defun profile-function(func)
+    "Instrument function for profiling"
+
+    (unless (profilable-p func)
+      (format t "Excluded: ~S~%" func)
+      (return-from profile-function))
+    
+    (when (or (not (fboundp func))
+	      (get func :profile-original-symbol-function))
+      (return-from profile-function))
+
+    (let ((original-symbol-function (symbol-function func)))
+      (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
+      
+      ;; install profiler code
+      (setf (symbol-function func)
+	    (lambda(&rest r) (execute-with-profiling func original-symbol-function r))))))
+  
 
 (defun profile-package(pkg)
   "Profile all external functions in a package"
@@ -94,6 +105,5 @@
      (list-profiling-results)))
 
 ;; TBD:
-;; - Try using (setf (fdefinition func) (lambda...))
-;;      (with-profiling (f1 f2...) (run-tests))
-;; - Make profiling output configurable
+;; - Allow to hook into profiling output
+;; - Should we keep track of profiled packages and functions so that we can unprofile them all at one fell swoop?
