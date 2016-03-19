@@ -10,7 +10,7 @@ See <http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler>. Than
 
 ## Status
 
-At this point, consider this code experimental. Contributions are of course welcome, but be aware that the code is still in a state of rapid flux. And probably buggy as hell anyway.
+Consider this code experimental, in a state of flux, and probably buggy as hell. Contributions are of course welcome anyway :-)
 
 So far, this code was tested in CoCreate Modeling only. It is likely, but not guaranteed to work in other Common Lisp implementations as well.
 
@@ -49,6 +49,15 @@ To profile the function under test as well as all externally visible functions i
 	  ('my-function (find-package "FOO-PACKAGE"))
 		(run-some-test-code))
 
+## UI
+
+If you prefer a GUI, load a simple profiler dialog into CoCreate Modeling as follows:
+
+	(load "lisp-profiler-ui")
+
+This adds a entry called "Profiler" to the Toolbox menu. Click this entry to open the dialog.
+
+Enter the names of functions or packages into the "Pkg/function" field one by one. Then enter the name of your test function or an arbitrary Lisp form into the "Code to profile" field. When you press Enter, the test function/form will be executed automatically, and the profiling results will be display in CoCreate Modeling's "output box".
 
 ## Limitations
 
