@@ -59,6 +59,8 @@ This adds a entry called "Profiler" to the Toolbox menu. Click this entry to ope
 
 Enter the names of functions or packages into the "Pkg/function" field one by one. Then enter the name of your test function or an arbitrary Lisp form into the "Code to profile" field. When you press Enter, the test function/form will be executed automatically, and the profiling results will be display in CoCreate Modeling's "output box".
 
+![foo](profiler-gui.png)
+
 ## Limitations
 
 CoCreate Modeling implements a subset of CLtL1 only. For example, there is no support for conditions, and the CLOS implementation is just a draft. So we cannot always use existing Common Lisp libraries or tools. Providing profiling functionality for CoCreate Modeling was and is my top priority, even if this means that lisp-profiler may become incompatible with other Lisp implementations.

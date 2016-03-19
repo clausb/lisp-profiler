@@ -61,14 +61,15 @@
   (defun profile-function(func)
     "Instrument function for profiling"
 
-    (unless (profilable-p func)
-      (format t "Excluded: ~S~%" func)
-      (return-from profile-function))
+    (when (stringp func) (setf func (find-symbol func)))
     
     (when (or (not (fboundp func))
 	      (get func :profile-original-symbol-function))
       (return-from profile-function))
 
+    (unless (profilable-p func)
+      (return-from profile-function))
+    
     (let ((original-symbol-function (symbol-function func)))
       (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
       
