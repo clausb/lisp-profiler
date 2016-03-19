@@ -14,33 +14,33 @@
 ;; - Button to unprofile everything (will also reset hashtable)
 (sd-defdialog
  'profiler
- :dialog-title "Profiler"
+ :dialog-title "Ridiculously trivial profiler"
  :toolbox-button t
+ 
  :variables
  '((package-or-function
     :value-type :string
     :title "Pkg/function"
     :prompt-text "Specify package or function to be profiled"
-    :after-input (profile-package-or-function package-or-function))
+    :after-input (profiler.clausbrod.de:profile-functions package-or-function))
    (code-to-profile
     :title "Code to profile"
+    :prompt-text "Specify function name or arbitrary Lisp form"
     :value-type :string
     :after-input (profile-code code-to-profile))
    (unprofile-all
+    :title "Unprofile all"
     :toggle-type :visible
     :push-action (profiler.clausbrod.de:unprofile-all))
    )
+ 
  :local-functions
- '((profile-package-or-function(p-or-f)
-			       (profiler.clausbrod.de:profile-functions p-or-f))
-   
-   (profile-code(code)
-		(let ((profiler.clausbrod.de:*profiler-stream* (make-string-output-stream)))
-		  (with-profiler () (eval (read-from-string code)))
-		  (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*))
-		  (close profiler.clausbrod.de:*profiler-stream*)))
-   )
+ '((profile-code(code)
+		(with-output-to-string (profiler.clausbrod.de:*profiler-stream*)
+				       (with-profiler () (eval (read-from-string code)))
+				       (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*)))))
+ 
  :ok-action
- '(progn
-    (profiler.clausbrod.de:unprofile-all))
+ '(profiler.clausbrod.de:unprofile-all)
+ 
  )

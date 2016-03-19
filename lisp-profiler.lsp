@@ -113,7 +113,7 @@
       (unprofile-function fspec))))
 
 (defun unprofile-all()
-  (unprofile-functions (list-all-packages)))
+  (apply 'unprofile-functions (list-all-packages)))
 
 (defmacro with-profiler(function-specifiers &body b)
   `(progn
