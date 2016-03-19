@@ -22,20 +22,26 @@
   (defun reset-profiling-results()
     (clrhash profile-hashtable))
   
+  (defun update-hashtable(func execution-time)
+    (let ((accum (gethash func profile-hashtable 0.0)))
+      (setf (gethash func profile-hashtable) (+ accum execution-time))))
+
   (defun list-profiling-results()
     "List profiling results in order of decreasing accumulated execution times"
     (format *profiler-stream* "~%Accumulated execution times:~%")
     
     (let (table-as-list)
       (maphash (lambda(k v) (push (cons k v) table-as-list)) profile-hashtable)
+      
       (dolist (pair (sort table-as-list #'> :key #'cdr))
-	(format *profiler-stream* "~,10F  ~S~%" (cdr pair) (car pair)))))
-
-  (defun update-hashtable(func execution-time)
-    (let ((accum (gethash func profile-hashtable 0.0)))
-      (setf (gethash func profile-hashtable) (+ accum execution-time))))
+	(let* ((sym (symbol-name (car pair)))
+	       (sympkg (symbol-package sym)))
+	  (multiple-value-bind (s st) (find-symbol sym sympkg)
+	    (format *profiler-stream* "~,10F  ~A~A~A~%"
+		    (cdr pair)
+		    (package-name sympkg)
+		    (if (eq :internal st) "::" ":") sym))))))
   )
-
 
 
 (defun get-current-time-in-microseconds()

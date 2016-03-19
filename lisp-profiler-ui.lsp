@@ -3,7 +3,7 @@
 
 (use-package :oli)
 
-(require "lisp-profiler" #P"lisp-profiler.lsp")
+(require "lisp-profiler" #P"lisp-profiler")
 
 (use-package :profiler.clausbrod.de)
 

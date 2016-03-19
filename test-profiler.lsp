@@ -5,7 +5,7 @@
 
 (in-package :clausbrod.de)
 
-(require "lisp-profiler" #P"lisp-profiler.lsp")
+(require "lisp-profiler" #P"lisp-profiler")
 
 (use-package :profiler.clausbrod.de)
 
