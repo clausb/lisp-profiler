@@ -61,7 +61,8 @@
 
 (let ((unprofilable-functions (make-hash-table :test 'equal)))
   (setf (gethash "FRAME2" unprofilable-functions) '("SECONDS-SINCE-1970"))
-    
+  #+hcl (setf (gethash "SYSTEM" unprofilable-functions) '("EVAL-FEATURE" "FUNCALL-PROTECTED" "GET-STRING-INPUT-STREAM-INDEX" "STRUCTURE-SUBTYPE-P" "STRUCTURE-REF1"))
+  
   (defun profilable-p(func)
     (let ((p (gethash (package-name (symbol-package func)) unprofilable-functions)))
       (not (member (symbol-name func) p :test 'equal))))
