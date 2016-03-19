@@ -4,7 +4,7 @@
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :profiler.clausbrod.de)
-(export '(profile-function unprofile-function list-profiling-results with-profiler))
+(export '(profile-function profile-package profile-functions unprofile-function unprofile-all list-profiling-results with-profiler))
 
 (provide "lisp-profiler")
 
@@ -95,6 +95,9 @@
     (if (packagep fspec)
 	(unprofile-package fspec)
       (unprofile-function fspec))))
+
+(defun unprofile-all()
+  (unprofile-functions (list-all-packages)))
 
 (defmacro with-profiler(function-specifiers &body b)
   `(progn
