@@ -32,11 +32,13 @@
    )
  :local-functions
  '((profile-package-or-function(p-or-f)
-			       (cond ((find-package p-or-f) (profiler.clausbrod.de:profile-package p-or-f))
-				     ((find-symbol p-or-f) (when (fboundp (find-symbol p-or-f)) (profiler.clausbrod.de:profile-function p-or-f)))))
+			       (profiler.clausbrod.de:profile-functions p-or-f))
    
    (profile-code(code)
-		(with-profiler () (eval (read-from-string code))))
+		(let ((profiler.clausbrod.de:*profiler-stream* (make-string-output-stream)))
+		  (with-profiler () (eval (read-from-string code)))
+		  (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*))
+		  (close profiler.clausbrod.de:*profiler-stream*)))
    )
  :ok-action
  '(progn

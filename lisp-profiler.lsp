@@ -4,10 +4,19 @@
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
 (in-package :profiler.clausbrod.de)
-(export '(profile-function profile-package profile-functions unprofile-function unprofile-all list-profiling-results with-profiler))
+(export '(profile-function
+	  profile-package
+	  profile-functions
+	  unprofile-function
+	  unprofile-all
+	  list-profiling-results
+	  with-profiler
+	  *profiler-stream*))
 
 (provide "lisp-profiler")
 
+;; To redirect profiling output, create a dynamic binding for this stream before profiling.
+(defvar *profiler-stream* *standard-output*)
 
 (let ((profile-hashtable (make-hash-table)))
   (defun reset-profiling-results()
@@ -15,11 +24,12 @@
   
   (defun list-profiling-results()
     "List profiling results in order of decreasing accumulated execution times"
-    (format *standard-output* "~%Accumulated execution times:~%")
+    (format *profiler-stream* "~%Accumulated execution times:~%")
+    
     (let (table-as-list)
       (maphash (lambda(k v) (push (cons k v) table-as-list)) profile-hashtable)
       (dolist (pair (sort table-as-list #'> :key #'cdr))
-	(format *standard-output* "~,10F  ~S~%" (cdr pair) (car pair)))))
+	(format *profiler-stream* "~,10F  ~S~%" (cdr pair) (car pair)))))
 
   (defun update-hashtable(func execution-time)
     (let ((accum (gethash func profile-hashtable 0.0)))
@@ -84,10 +94,16 @@
     (when (remprop func :profile-original-symbol-function)
       (setf (symbol-function func) original-symbol-function))))
 
+(defun to-package(fspec)
+  (cond ((packagep fspec) fspec)
+	((stringp fspec) (find-package fspec))
+	((keywordp fspec) (find-package fspec))
+	((symbolp fspec) (find-package fspec))))
+
 (defun profile-functions(&rest function-specifiers)
   (dolist (fspec function-specifiers)
-    (if (packagep fspec)
-	(profile-package fspec)
+    (if (to-package fspec)
+	(profile-package (to-package fspec))
       (profile-function fspec))))
 
 (defun unprofile-functions(&rest function-specifiers)
@@ -107,6 +123,3 @@
      (unprofile-functions ,@function-specifiers)
      (list-profiling-results)))
 
-;; TBD:
-;; - Allow to hook into profiling output
-;; - Should we keep track of profiled packages and functions so that we can unprofile them all at one fell swoop?
