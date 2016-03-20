@@ -3,6 +3,12 @@
 ;; Test code for ridiculously trivial profiler for Lisp code
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
 
+;; Original author: Claus Brod
+;;                  http://www.clausbrod.de
+;;
+;; For licensing details, see the LICENSE file.
+;; For documentation, see README.md.
+
 (in-package :clausbrod.de)
 
 (require "lisp-profiler" #P"lisp-profiler")

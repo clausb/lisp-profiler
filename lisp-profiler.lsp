@@ -2,7 +2,13 @@
 
 ;; Ridiculously trivial profiler for Lisp code
 ;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
-
+;;
+;; Original author: Claus Brod
+;;                  http://www.clausbrod.de
+;;
+;; For licensing details, see the LICENSE file.
+;; For documentation, see README.md.
+;;
 (in-package :profiler.clausbrod.de)
 (export '(profile-function
 	  profile-package
@@ -60,7 +66,7 @@
       (update-hashtable func (- (get-current-time-in-microseconds) start-time)))))
 
 (let ((unprofilable-functions (make-hash-table :test 'equal)))
-  (setf (gethash "FRAME2" unprofilable-functions) '("SECONDS-SINCE-1970"))
+  #+hcl (setf (gethash "FRAME2" unprofilable-functions) '("SECONDS-SINCE-1970"))
   #+hcl (setf (gethash "SYSTEM" unprofilable-functions) '("EVAL-FEATURE" "FUNCALL-PROTECTED" "GET-STRING-INPUT-STREAM-INDEX" "STRUCTURE-SUBTYPE-P" "STRUCTURE-REF1"))
   
   (defun profilable-p(func)

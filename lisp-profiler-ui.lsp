@@ -1,4 +1,14 @@
-;; UI dialog for profiling in CoCreate Modeling (aka PTC Creo Elements/Direct Modeling)
+;;-*-Lisp-*-
+
+;; UI dialog for ridiculously trivial Lisp profiler
+;; See http://www.clausbrod.de/Blog/DefinePrivatePublic20160308LispProfiler
+
+;; Original author: Claus Brod
+;;                  http://www.clausbrod.de
+;;
+;; For licensing details, see the LICENSE file.
+;; For documentation, see README.md.
+
 (in-package :profiler-ui.clausbrod.de)
 
 (use-package :oli)
