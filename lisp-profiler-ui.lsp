@@ -38,6 +38,14 @@
     :prompt-text "Specify function name or arbitrary Lisp form"
     :value-type :string
     :after-input (profile-code code-to-profile))
+   (start-profiling
+    :title "Start profiling"
+    :toggle-type :visible
+    :push-action (profile-start))
+   (stop-profiling
+    :title "Stop profiling"
+    :toggle-type visible
+    :push-action (profile-stop))
    (unprofile-all
     :title "Unprofile all"
     :toggle-type :visible
@@ -52,7 +60,17 @@
    (profile-code(code)
 		(with-output-to-string (profiler.clausbrod.de:*profiler-stream*)
 				       (with-profiler () (eval (read-from-string code)))
-				       (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*)))))
+				       (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*))))
+
+   (profile-start()
+		 (profiler.clausbrod.de:reset-profiling-results))
+   
+   (profile-stop()
+		(with-output-to-string (profiler.clausbrod.de:*profiler-stream*)
+				       (profiler.clausbrod.de:list-profiling-results)
+				       (frame2-ui::display (get-output-stream-string profiler.clausbrod.de:*profiler-stream*))))
+   
+   )
  
  :ok-action
  '(profiler.clausbrod.de:unprofile-all)

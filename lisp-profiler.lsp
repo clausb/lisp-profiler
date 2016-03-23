@@ -16,10 +16,13 @@
 	  unprofile-function
 	  unprofile-all
 	  list-profiling-results
+	  reset-profiling-results
 	  with-profiler
 	  *profiler-stream*))
 
 (provide "lisp-profiler")
+
+#+hcl (use-fast-links nil)
 
 ;; To redirect profiling output, create a dynamic binding for this stream before profiling.
 (defvar *profiler-stream* *standard-output*)
@@ -42,15 +45,15 @@
       (dolist (pair (sort table-as-list #'> :key #'cdr))
 	;; Lisp prints symbols in "used" packages without the package name. Seems
 	;; we need to roll our own printing code. (Is there a better way?)
-	(let* ((sym (symbol-name (car pair)))
+	(let* ((sym (car pair))
 	       (sympkg (symbol-package sym)))
-	  (multiple-value-bind (s st) (find-symbol sym sympkg)
-	    (format *profiler-stream* "~,10F  ~A~A~A~%"
+	  
+	  (multiple-value-bind (s st) (find-symbol (symbol-name sym) sympkg)
+	    (format *profiler-stream* "~14,10F  ~A~A~A~%"
 		    (cdr pair)
 		    (package-name sympkg)
 		    (if (eq :internal st) "::" ":") sym))))))
   )
-
 
 (defun get-current-time-in-microseconds()
   #+hcl (f2::seconds-since-1970)
@@ -59,6 +62,7 @@
 
 (defun execute-with-profiling(func original-symbol-function args)
   (let ((start-time (get-current-time-in-microseconds)))
+    
     (unwind-protect
 	(if args
 	    (apply original-symbol-function args)
@@ -72,7 +76,7 @@
   (defun profilable-p(func)
     (let ((p (gethash (package-name (symbol-package func)) unprofilable-functions)))
       (not (member (symbol-name func) p :test 'equal))))
-
+    
   (defun profile-function(func)
     "Instrument function for profiling"
 
@@ -86,6 +90,9 @@
       (return-from profile-function))
     
     (let ((original-symbol-function (symbol-function func)))
+      (unless (functionp original-symbol-function)
+	(return-from profile-function))
+      
       (setf (get func :profile-original-symbol-function) original-symbol-function) ;; mark as profiled
       
       ;; install profiler code
