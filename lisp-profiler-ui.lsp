@@ -40,15 +40,15 @@
     :after-input (profile-code code-to-profile))
    (start-profiling
     :title "Start profiling"
-    :toggle-type :visible
+    :toggle-type :grouped-toggle
     :push-action (profile-start))
    (stop-profiling
     :title "Stop profiling"
-    :toggle-type visible
+    :toggle-type :grouped-toggle
     :push-action (profile-stop))
    (unprofile-all
     :title "Unprofile all"
-    :toggle-type :visible
+    :toggle-type :wide-toggle
     :push-action (profiler.clausbrod.de:unprofile-all))
    )
  
