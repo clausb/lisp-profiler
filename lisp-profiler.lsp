@@ -43,8 +43,9 @@
       (maphash (lambda(k v) (push (cons k v) table-as-list)) profile-hashtable)
       
       (dolist (pair (sort table-as-list #'> :key #'cdr))
-	;; Lisp prints symbols in "used" packages without the package name. Seems
-	;; we need to roll our own printing code. (Is there a better way?)
+	;; Lisp prints symbols in "used" packages without package name. Seems
+	;; we need to roll our own printing code if we always want to see the full
+	;; symbol name including package. (Is there a better way?)
 	(let* ((sym (car pair))
 	       (sympkg (symbol-package sym)))
 	  

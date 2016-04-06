@@ -13,15 +13,12 @@
 
 (use-package :oli)
 
-(require "lisp-profiler" #P"lisp-profiler")
+;;(require "lisp-profiler" #P"lisp-profiler")
+(require "lisp-profiler")
 
 (use-package :profiler.clausbrod.de)
 
 
-;; Variables in dialog:
-;; - Text field for entering package or function name
-;; - Text field for entering code to be profiled (will display profiling results after running test code)
-;; - Button to unprofile everything (will also reset hashtable)
 (sd-defdialog
  'profiler
  :dialog-title "Ridiculously trivial profiler"
